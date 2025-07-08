@@ -22,7 +22,7 @@ dagshub.init(repo_owner='amitnegionway', repo_name='mlops-mini-projects', mlflow
 mlflow.set_tracking_uri('https://dagshub.com/amitnegionway/mlops-mini-projects.mlflow')
 
 model_name = "my_model"
-model_version = 2
+model_version = 4
 
 model_uri = f'models:/{model_name}/{model_version}'
 model = mlflow.pyfunc.load_model(model_uri)
@@ -52,4 +52,5 @@ def predict():
     return render_template('index.html', result=result[0])
 
 
-app.run
+if __name__ == "__main__":
+    app.run(debug=True)
