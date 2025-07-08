@@ -7,13 +7,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: checkout code 
+      - name: Checkout code 
         uses: actions/checkout@v3
 
-      - name: setup python 
-        uses: actions/setup-python@v2
+      - name: Set up Python 
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10"
+
+      - name: Debug environment info
+        run: |
+          set -x
+          python --version
+          pip --version
+          ls -la
+          pwd
 
       - name: Cache pip dependencies
         uses: actions/cache@v3
@@ -23,21 +31,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - name: install dependencies
+      - name: Install dependencies
         run: |
+          set -x
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install dvc
 
-      - name: run Pipeline
+      - name: Run DVC pipeline
         env:
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
         run: |
+          set -x
           dvc repro
 
-      - name: run model tests
+      - name: Run model tests
         env:
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}    
         run: |
+          set -x
           python -m unittest test/test_model.py  
-
