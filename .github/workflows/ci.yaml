@@ -17,8 +17,10 @@ jobs:
 
       - name: install dependencies
         run: |
+          pip install --upgrade pip
           pip install -r requirements.txt
-
+          pip install dvc
+          
       - name: run Pipeline
         run: |
           dvc repro
