@@ -50,5 +50,4 @@ jobs:
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}    
         run: |
           set -x
-          python -m unittest test/test_model.py  
-
+          python -m unittest test_model.py  
