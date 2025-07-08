@@ -48,5 +48,5 @@ class TestModelLoading(unittest.TestCase):
         self.assertIsNotNone(self.new_model)
 
     
-if _name_ == "_main_":
+if __name__ == "__main__":
     unittest.main()
