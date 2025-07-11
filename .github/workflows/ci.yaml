@@ -65,7 +65,7 @@ jobs:
       - name: build a docker image 
         if: success()
         run: |
-          docker build --no-cache -t ${{ secrets.DOCKER_HUB_USERNAME }}/emotion2:latest .
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/emotion2:latest .
 
       - name: puch docker image to Dockerhub 
         if: success()
