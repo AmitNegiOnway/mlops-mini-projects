@@ -89,8 +89,8 @@ jobs:
           script: |
             aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
             aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            aws configure set default.region eu-north-1a
-            aws ecr get-login-password --region eu-north-1a | docker login --username AWS --password-stdin 888121514404.dkr.ecr.eu-north-1.amazonaws.com  
+            aws configure set default.region eu-north-1
+            aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 888121514404.dkr.ecr.eu-north-1.amazonaws.com  
             docker pull 888121514404.dkr.ecr.eu-north-1.amazonaws.com/amitnegi_ecr:latest
             docker stop my-app || true
             docker rm my-app || true
