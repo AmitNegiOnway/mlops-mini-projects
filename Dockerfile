@@ -17,12 +17,14 @@ FROM python:3.10-slim AS final
 
 WORKDIR /app
 
-# ✅ Copy installed Python packages
+# ✅ Copy Python packages and gunicorn binary
 COPY --from=build /usr/local/lib/python3.10 /usr/local/lib/python3.10
+COPY --from=build /usr/local/bin /usr/local/bin
 
-# ✅ Copy your app code
+# ✅ Copy your app
 COPY --from=build /app /app
 
 EXPOSE 5000
 
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--timeout", "120", "app:app"]
+
