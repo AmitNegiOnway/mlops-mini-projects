@@ -55,54 +55,41 @@ jobs:
         run: |
           python -m unittest tests/test_flask_app.py
 
-     
       - name: Login to AWS ECR
         if: success()
         run: |
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws ecr get-login-password --region eu-north-1  | docker login --username AWS --password-stdin 888121514404.dkr.ecr.eu-north-1.amazonaws.com
+          aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 888121514404.dkr.ecr.eu-north-1.amazonaws.com
       
       - name: Build Docker image
         if: success()
         run: |
-          docker build -t amitnegi_ecr .
+          docker build -t onway_ecr .
 
       - name: Tag Docker image
         if: success()
         run: |
-          docker tag amitnegi_ecr:latest 888121514404.dkr.ecr.eu-north-1.amazonaws.com/amitnegi_ecr:latest
+          docker tag onway_ecr:latest 888121514404.dkr.ecr.eu-north-1.amazonaws.com/onway_ecr:latest
 
       - name: Push Docker image to AWS ECR
         if: success()
         run: |
-          docker push 888121514404.dkr.ecr.eu-north-1.amazonaws.com/amitnegi_ecr:latest
+          docker push 888121514404.dkr.ecr.eu-north-1.amazonaws.com/onway_ecr:latest
 
       - name: Deploy to EC2
-
         if: success()
         uses: appleboy/ssh-action@v0.1.5
         with:
-          host: ${{ secrets.EC2_HOST}}
-          username: ${{ secrets.EC2_USER}}
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
             aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             aws configure set default.region eu-north-1
             aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 888121514404.dkr.ecr.eu-north-1.amazonaws.com  
-            docker pull 888121514404.dkr.ecr.eu-north-1.amazonaws.com/amitnegi_ecr:latest
+            docker pull 888121514404.dkr.ecr.eu-north-1.amazonaws.com/onway_ecr:latest
             docker stop my-app || true
             docker rm my-app || true
-            docker run -d -p 80:5000 -e DAGSHUB_PAT=${{ secrets.DAGSHUB_PAT }} --name onway-app 888121514404.dkr.ecr.eu-north-1.amazonaws.com/amitnegi_ecr:latest
-
-
-
-
-              
-
-
-
-
-
-
+            docker run -d -p 80:5000 -e DAGSHUB_PAT=${{ secrets.DAGSHUB_PAT }} --name onway-app 888121514404.dkr.ecr.eu-north-1.amazonaws.com/onway_ecr:latest
