@@ -1,30 +1,24 @@
-# Stage 1: Build
-FROM python:3.10 AS build
+FROM python:3.10-slim
 
 WORKDIR /app
 
+# Install system dependencies for nltk and pip packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install
 COPY flask_app/requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY flask_app/ /app/
-COPY models/vectorizer.pkl /app/models/vectorizer.pkl
-
+# Download nltk resources
 RUN python -m nltk.downloader stopwords wordnet
 
-
-# Stage 2: Final
-FROM python:3.10-slim AS final
-
-WORKDIR /app
-
-# ✅ Copy Python packages and gunicorn binary
-COPY --from=build /usr/local/lib/python3.10 /usr/local/lib/python3.10
-COPY --from=build /usr/local/bin /usr/local/bin
-
-# ✅ Copy your app
-COPY --from=build /app /app
+# Copy app and model
+COPY flask_app/ /app/
+COPY models/vectorizer.pkl /app/models/vectorizer.pkl
 
 EXPOSE 5000
 
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--timeout", "120", "app:app"]
-
