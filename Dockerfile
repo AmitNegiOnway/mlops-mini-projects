@@ -24,6 +24,10 @@ WORKDIR /app
 # Copy only the necessary files from the build stage
 COPY --from=build /app /app
 
+# 🔥 Install dependencies in final stage again
+COPY flask_app/requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
 # Expose the application port
 EXPOSE 5000
 
