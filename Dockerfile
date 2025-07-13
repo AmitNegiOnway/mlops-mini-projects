@@ -1,15 +1,31 @@
-FROM python:3.10-slim
+# Stage 1: Build Stage
+FROM python:3.10 AS build
 
 WORKDIR /app
 
-COPY flask_app/ /app/
+# Copy the requirements.txt file from the flask_app folder
+COPY flask_app/requirements.txt /app/
 
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the application code and model files
+COPY flask_app/ /app/
 COPY models/vectorizer.pkl /app/models/vectorizer.pkl
 
-RUN pip install -r requirements.txt
+# Download only the necessary NLTK data
+RUN python -m nltk.downloader stopwords wordnet
 
-RUN python -m nltk.downloader stopwords wordnet 
+# Stage 2: Final Stage
+FROM python:3.10-slim AS final
 
+WORKDIR /app
+
+# Copy only the necessary files from the build stage
+COPY --from=build /app /app
+
+# Expose the application port
 EXPOSE 5000
 
-CMD ["gunicorn","-b","0.0.0.0:5000","app:app"]
+# Set the command to run the application
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
