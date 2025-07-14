@@ -92,4 +92,4 @@ jobs:
             docker pull 888121514404.dkr.ecr.eu-north-1.amazonaws.com/onway_ecr:latest
             docker stop onway-app || true
             docker rm onway-app || true
-            docker run -d -p 80:5000 -e DAGSHUB_PAT=${{ secrets.DAGSHUB_PAT }} --name onway-app 888121514404.dkr.ecr.eu-north-1.amazonaws.com/onway_ecr:latest
+            docker run -d --restart always -p 80:5000 -e DAGSHUB_PAT=${{ secrets.DAGSHUB_PAT }} --name onway-app 888121514404.dkr.ecr.eu-north-1.amazonaws.com/onway_ecr:latest
