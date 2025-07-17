@@ -1,8 +1,10 @@
 version: 0.0
 os: linux
+
 files:
   - source: /
     destination: /home/ubuntu/app
+    overwrite: yes   # ✅ Moved here — correct placement
 
 hooks:
   BeforeInstall:
